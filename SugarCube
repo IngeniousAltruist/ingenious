@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HOYYY AIESEC</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+            background-color: black;
+            font-family: 'Poppins', sans-serif;
+            color: #ffd13b;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            flex-direction: column;
+            position: relative;
+            padding: 0;
+            box-sizing: border-box;
+            text-align: center;
+        }
+
+        canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+
+        .frame {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            white-space: nowrap;
+            line-height: 1.5;
+            font-weight: 700;
+            z-index: 10;
+            text-shadow: 3px 3px 10px rgba(0, 0, 0, 0.8), -3px -3px 10px rgba(0, 0, 0, 0.8);
+            margin: 10px;
+            padding: 0 5%;
+            box-sizing: border-box;
+            max-width: 90%;
+            max-height: 90%;
+            overflow: hidden;
+            font-size: 2vw;
+        }
+
+        .line {
+            display: block;
+            height: 1.5em;
+        }
+
+        iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -2;
+            object-fit: cover;
+        }
+
+        .overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: -1;
+        }
+    </style>
+</head>
+<body>
+    <div class="overlay"></div>
+    <canvas id="background"></canvas>
+    <div class="frame" id="frame"></div>
+
+    <iframe id="youtubePlayer" src="https://www.youtube.com/embed/DzwkcbTQ7ZE?autoplay=1&loop=1&playlist=DzwkcbTQ7ZE&start=15" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+
+    <script>
+        const frames = [
+            ["HOYYY AIESEC!"],
+            ["I want to say... thank you.", "To each and every one of you.", "", "Especially...", "“You.”"],
+            ["Being here has been extraordinary.", "Magnificent.", "Astounding.", "Life-changing."],
+            ["Truth is,", "no word can fully capture this experience.", "Moments like these go beyond words."],
+            ["But I need to say this:", "I’m sorry."],
+            ["If my behavior has confused you...", "it’s because I’ve been struggling.", "I’ve felt lost, caught in a dilemma I couldn’t escape."],
+            ["My mind kept telling me:", "You don’t belong here.", "You can’t fit in."],
+            ["But for the first time in a very, very long time...", "My heart said “yes.”"],
+            ["And this time? My heart won.", "The reason?", "", "“You.”"],
+            ["From this moment on,", "I vow to become the best version of myself."],
+            ["Not just for me.", "", "But because you’ve given me something worth fighting for."],
+            ["Thank you"]
+        ];
+
+        let currentFrameIndex = 0;
+        let currentLineIndex = 0;
+        let currentCharIndex = 0;
+        const frameElement = document.getElementById("frame");
+        const canvas = document.getElementById("background");
+        const ctx = canvas.getContext("2d");
+
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        const stars = [];
+        for (let i = 0; i < 100; i++) {
+            stars.push({
+                x: Math.random() * canvas.width,
+                y: Math.random() * canvas.height,
+                size: Math.random() * 2,
+                speed: Math.random() * 1 + 0.5
+            });
+        }
+
+        function drawBackground() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = "white";
+            stars.forEach(star => {
+                ctx.beginPath();
+                ctx.arc(star.x, star.y, star.size, 0, 2 * Math.PI);
+                ctx.fill();
+                star.y += star.speed;
+                if (star.y > canvas.height) star.y = 0;
+            });
+            requestAnimationFrame(drawBackground);
+        }
+
+        drawBackground();
+
+        function displayFrame() {
+            if (currentFrameIndex < frames.length) {
+                const frameLines = frames[currentFrameIndex];
+
+                frameElement.innerHTML = frameLines.map(() => '<div class="line"></div>').join(" ");
+
+                const lineElements = document.querySelectorAll(".line");
+
+                function typeLine() {
+                    if (currentLineIndex < frameLines.length) {
+                        const line = frameLines[currentLineIndex];
+                        if (currentCharIndex < line.length) {
+                            lineElements[currentLineIndex].textContent += line[currentCharIndex];
+                            currentCharIndex++;
+                            setTimeout(typeLine, 50);
+                        } else {
+                            currentCharIndex = 0;
+                            currentLineIndex++;
+                            setTimeout(typeLine, 500);
+                        }
+                    } else {
+                        setTimeout(() => {
+                            currentFrameIndex++;
+                            currentLineIndex = 0;
+                            currentCharIndex = 0;
+                            displayFrame();
+                        }, 8000);
+                    }
+                }
+
+                typeLine();
+            }
+        }
+
+        displayFrame();
+    </script>
+</body>
+</html>
